@@ -108,6 +108,15 @@ public class App extends Application {
     }
 
     private void fillGrid() {
+        double probability = (percentFill.getSelectionModel().getSelectedIndex() + 1) / 10.0;
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < columns; c++) {
+                filled[r][c] = (Math.random() < probability);
+                visited[r][c] = false;
+            }
+        }
+        message.setText("Click a square to get the blob size.");
+        draw();
     }
 
     private void mousePressed(MouseEvent e) {
@@ -135,7 +144,7 @@ public class App extends Application {
                 } else if (filled[r][c]) {
                     g.setFill(Color.GRAY);
                     g.fillRect(1 + c*SQUARE_SIZE, 1 + r*SQUARE_SIZE, SQUARE_SIZE - 1, SQUARE_SIZE - 1);
-                    
+
                 }
             }
         }
