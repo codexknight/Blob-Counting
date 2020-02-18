@@ -20,7 +20,7 @@ import javafx.stage.Stage;
  */
 public class App extends Application {
 
-    final static int SQUARE_SIZE = 19;
+    final static int SQUARE_SIZE = 9;
     final static int width = 454;
     final static int height = 400;
 
@@ -34,10 +34,17 @@ public class App extends Application {
     int rows;
     int columns;
 
+    boolean[][] filled;
+    boolean[][] visited;
+
+
     @Override
     public void start(Stage stage) {
         rows = (height - 120) / SQUARE_SIZE;
         columns = (width - 20) / SQUARE_SIZE;
+
+        filled = new boolean[rows][columns];
+        visited = new boolean[rows][columns];
 
         canvas = new Canvas(1 + columns * SQUARE_SIZE, 1 + rows * SQUARE_SIZE);
         g = canvas.getGraphicsContext2D();
@@ -46,8 +53,6 @@ public class App extends Application {
         message = new Label("Click a square to get the blob size.");
         message.setTextFill(Color.BLUE);
         message.setFont(Font.font(null, FontWeight.BOLD, 14));
-
-
 
         percentFill = new ComboBox<String>();
         percentFill.getItems().add("10% fill");
@@ -72,11 +77,12 @@ public class App extends Application {
         root.setStyle("-fx-background-color:#BBF; -fx-border-color:#00A;-fx-border-width:2px");
 
         canvas.relocate(10, 10);
+
         message.setManaged(false);
         message.relocate(15, height - 100);
         message.resize(width - 30, 23);
         message.setAlignment(Pos.CENTER);
-        
+
         countButton.setManaged(false);
         countButton.relocate(15, height - 72);
         countButton.resize(width - 30, 28);
@@ -105,6 +111,35 @@ public class App extends Application {
     }
 
     private void mousePressed(MouseEvent e) {
+        draw();
+    }
+
+    public void draw() {
+
+        g.setFill(Color.WHITE);
+        g.fillRect(0, 0, columns * SQUARE_SIZE, rows * SQUARE_SIZE);
+
+        g.setStroke(Color.BLACK);
+        for (int i = 0; i <= rows; i++) {
+            g.strokeLine(0.5, 0.5 + i*SQUARE_SIZE, columns*SQUARE_SIZE + 0.5, 0.5 + i*SQUARE_SIZE);
+        }
+        for (int i = 0; i <= columns; i++){
+            g.strokeLine(0.5 + i*SQUARE_SIZE, 0.5, 0.5 + i*SQUARE_SIZE, rows*SQUARE_SIZE + 0.5);
+        }
+
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < columns; c++) {
+                if (visited[r][c]) {
+                    g.setFill(Color.RED);
+                    g.fillRect(1 + c * SQUARE_SIZE, 1 + r * SQUARE_SIZE, SQUARE_SIZE - 1, SQUARE_SIZE - 1);
+                } else if (filled[r][c]) {
+                    g.setFill(Color.GRAY);
+                    g.fillRect(1 + c*SQUARE_SIZE, 1 + r*SQUARE_SIZE, SQUARE_SIZE - 1, SQUARE_SIZE - 1);
+                    
+                }
+            }
+        }
+
     }
 
     public static void main(String[] args) {
