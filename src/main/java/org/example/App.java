@@ -105,6 +105,37 @@ public class App extends Application {
     }
 
     private void countBlobs() {
+        int count = 0;
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < columns; c++) {
+                visited[r][c] = false;
+            }
+        }
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < columns; c++) {
+                if (getBlobSize(r, c) > 0) {
+                    count++;
+                }
+            }
+        }
+        draw();
+        message.setText("The number of blobs is " + count);
+    }
+
+    private int getBlobSize(int r, int c) {
+        if (r < 0 || r >= rows || c < 0 || c >= columns) {
+            return 0;
+        }
+        if (filled[r][c] == false || visited[r][c] == true) {
+            return 0;
+        }
+        visited[r][c] = true;
+        int size = 1;
+        size += getBlobSize(r - 1, c);
+        size += getBlobSize(r + 1, c);
+        size += getBlobSize(r, c - 1);
+        size += getBlobSize(r, c + 1);
+        return size;
     }
 
     private void fillGrid() {
@@ -120,6 +151,30 @@ public class App extends Application {
     }
 
     private void mousePressed(MouseEvent e) {
+
+        int row = (int) ((e.getY()-1 ) / SQUARE_SIZE);
+        int col = (int) ((e.getX()-1) / SQUARE_SIZE);
+        if (row < 0 || row >= rows || col < 0 || col >= columns) {
+            message.setText("Please click on a square!");
+            return;
+        }
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < columns; c++) {
+                visited[r][c] = false;
+            }
+
+        }
+        int size = getBlobSize(row, col);
+        if (size == 0) {
+            message.setText("There is no blob at (" + row + "," + col + ").");
+
+        }
+        else if (size == 1) {
+            message.setText("Blob at (" + row + "," + col + ") contains 1 square.");
+        }
+        else {
+            message.setText("Blob at (" + row + "," + col + ") contains " + size + " squares.");
+        }
         draw();
     }
 
